@@ -21,10 +21,12 @@
   "homepage": "https://github.com/jeftekhari/BitbuddiesDiscordBot#readme",
   "dependencies": {
     "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "ws": "^8.18.2"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.21",
     "@types/ws": "^8.18.1",

@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+// Load environment variables from .env file
+dotenv.config();
+
 import express, { Express, Request, Response } from 'express';
 import http from 'http';
 

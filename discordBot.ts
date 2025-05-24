@@ -1,9 +1,29 @@
 import { Client, GatewayIntentBits, Events, Message } from 'discord.js';
 import WebSocket from 'ws';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-const TARGET_CHANNEL_ID = process.env.DISCORD_TARGET_CHANNEL_ID;
+const TARGET_CHANNEL_ID = process.env.TARGET_CHANNEL_ID;
 const EXTERNAL_WS_URL = process.env.EXTERNAL_WS_URL;
+
+// Validate required environment variables
+if (!BOT_TOKEN) {
+  console.error('Error: DISCORD_BOT_TOKEN environment variable is required');
+  process.exit(1);
+}
+
+if (!TARGET_CHANNEL_ID) {
+  console.error('Error: DISCORD_TARGET_CHANNEL_ID environment variable is required');
+  process.exit(1);
+}
+
+if (!EXTERNAL_WS_URL) {
+  console.error('Error: EXTERNAL_WS_URL environment variable is required');
+  process.exit(1);
+}
 
 const discordClient = new Client({
   intents: [
