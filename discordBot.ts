@@ -36,38 +36,45 @@ const discordClient = new Client({
 let externalWebSocket: WebSocket | null = null;
 
 function connectToExternalSite() {
-  console.log(`Attempting to connect to external WebSocket: ${EXTERNAL_WS_URL}`);
-  
-  if (externalWebSocket && (externalWebSocket.readyState === WebSocket.OPEN || externalWebSocket.readyState === WebSocket.CONNECTING)) {
-    console.log('Closing existing external WebSocket connection before reconnecting.');
-    externalWebSocket.removeAllListeners(); 
-    externalWebSocket.terminate(); 
-  }
-
-  const wsClient = new WebSocket(EXTERNAL_WS_URL || '');
-
-  wsClient.on('open', () => {
-    console.log('Successfully connected to external WebSocket server.');
-    externalWebSocket = wsClient; 
-  });
-
-  wsClient.on('message', (data: WebSocket.Data) => {
-    console.log('Received message from external WebSocket server:', data.toString());
-  });
-
-  wsClient.on('close', (code: number, reason: Buffer) => {
-    console.log(`Disconnected from external WebSocket server. Code: ${code}, Reason: ${reason.toString()}. Attempting to reconnect in 5 seconds...`);
-    externalWebSocket = null; 
-    setTimeout(connectToExternalSite, 5000); 
-  });
-
-  wsClient.on('error', (error: Error) => {
-    console.error('External WebSocket client error:', error.message);
-    if (wsClient.readyState !== WebSocket.CLOSED && wsClient.readyState !== WebSocket.CLOSING) {
-        wsClient.terminate(); 
+    console.log(`Attempting to connect to external WebSocket: ${EXTERNAL_WS_URL}`);
+    
+    if (externalWebSocket && (externalWebSocket.readyState === WebSocket.OPEN || externalWebSocket.readyState === WebSocket.CONNECTING)) {
+      console.log('Closing existing external WebSocket connection before reconnecting.');
+      externalWebSocket.removeAllListeners(); 
+      externalWebSocket.terminate(); 
     }
-  });
-}
+  
+    const wsClient = new WebSocket(EXTERNAL_WS_URL || '', {
+      headers: {
+        'User-Agent': 'BitBuddies-Discord-Bot/1.0',
+        'Origin': 'https://bitbuddies.shipstuff.fun',
+        'Sec-WebSocket-Version': '13'
+      }
+    });
+  
+    wsClient.on('open', () => {
+      console.log('Successfully connected to external WebSocket server.');
+      externalWebSocket = wsClient; 
+    });
+  
+    wsClient.on('message', (data: WebSocket.Data) => {
+      console.log('Received message from external WebSocket server:', data.toString());
+    });
+  
+    wsClient.on('close', (code: number, reason: Buffer) => {
+      console.log(`Disconnected from external WebSocket server. Code: ${code}, Reason: ${reason.toString()}.`);
+      console.log('Attempting to reconnect in 5 seconds...');
+      externalWebSocket = null; 
+      setTimeout(connectToExternalSite, 5000); 
+    });
+  
+    wsClient.on('error', (error: Error) => {
+      console.error('External WebSocket client error:', error.message);
+      if (wsClient.readyState !== WebSocket.CLOSED && wsClient.readyState !== WebSocket.CLOSING) {
+          wsClient.terminate(); 
+      }
+    });
+  }
 
 function streamToExternalSite(messageData: any): void {
   if (externalWebSocket && externalWebSocket.readyState === WebSocket.OPEN) {
