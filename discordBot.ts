@@ -8,6 +8,7 @@ dotenv.config();
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const TARGET_CHANNEL_ID = process.env.TARGET_CHANNEL_ID;
 const EXTERNAL_WS_URL = process.env.EXTERNAL_WS_URL;
+const BUD_NOTIF_CHANNEL_ID = process.env.BUD_NOTIF_CHANNEL_ID;
 
 // Validate required environment variables
 if (!BOT_TOKEN) {
@@ -22,6 +23,11 @@ if (!TARGET_CHANNEL_ID) {
 
 if (!EXTERNAL_WS_URL) {
   console.error('Error: EXTERNAL_WS_URL environment variable is required');
+  process.exit(1);
+}
+
+if (!BUD_NOTIF_CHANNEL_ID) {
+  console.error('Error: BUD_NOTIF_CHANNEL_ID environment variable is required');
   process.exit(1);
 }
 
@@ -126,3 +132,6 @@ export async function loginToDiscord(): Promise<void> {
     process.exit(1);
   }
 }
+
+// Export the notification channel ID and Discord client
+export { discordClient, BUD_NOTIF_CHANNEL_ID };
