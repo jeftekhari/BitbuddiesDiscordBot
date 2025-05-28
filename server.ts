@@ -51,12 +51,19 @@ app.post('/api/send-message', (async (req: Request, res: Response) => {
         });
       }
       message = `🎉 *${playerName}* just leveled up **${petName}** to **Level ${level}** from ${origin}!`;
+    } else if (type === 'legendary') {
+      if (!petName || !playerName) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing required fields for legendary: petName, playerName' 
+        });
+      }
+      message = `🥚 *${playerName}* just hatched a legendary **${petName}**!`;
     } else {
       // Handle other message types or allow custom messages
       message = req.body.message || `Notification: ${type}`;
     }
 
-    // Get the notification channel using the environment variable with non-null assertion
     const channel = discordClient.channels.cache.get(BUD_NOTIF_CHANNEL_ID!);
     
     if (!channel) {
@@ -66,7 +73,6 @@ app.post('/api/send-message', (async (req: Request, res: Response) => {
       });
     }
 
-    // Check if channel is a text channel and cast it properly
     if (!channel.isTextBased()) {
       return res.status(400).json({ 
         success: false, 
@@ -74,7 +80,6 @@ app.post('/api/send-message', (async (req: Request, res: Response) => {
       });
     }
 
-    // Cast to text-based channel type and send the message
     const textChannel = channel as TextChannel | DMChannel | NewsChannel | ThreadChannel;
     await textChannel.send(message);
     
